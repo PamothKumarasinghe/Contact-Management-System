@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 // store the contact as 
@@ -13,8 +14,13 @@ struct Contact {
     string phone;
     string email;
 };
-vector<string> split(string& line) {
-    
+vector<string> split(const string& line, char delimiter = '|') {
+    vector<string> tokens;
+    string token;
+    istringstream stream(line);
+    while (getline(stream, token, delimiter))
+        tokens.push_back(token);
+    return tokens;
 }
 void addContact() {
     Contact c;
@@ -50,5 +56,20 @@ void viewContact() {
     file.close();
 }
 int main() {
+    while (true) {
+        cout << "\n-----Contact Management-----\n";
+        cout << "1. Add Contact\n2. View Contact\n3. Exit";
+        string choice;
+        getline(cin, choice);
 
+        if (choice == "1")
+            addContact();
+        else if (choice == "2")
+            viewContact();
+        else if (choice == "3")
+            break;
+        else 
+            cout << "Invalid Option. Please Try Again!\n";
+    }
+    cout << "-----Good Bye!-----";
 }
