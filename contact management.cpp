@@ -42,7 +42,9 @@ void addContact() {
 }
 void searchContact() {
     string keyWord;
+    cout << "Enter the Name or Phone Number to Search: ";
     getline(cin, keyWord);
+
     ifstream file("contacts.txt"); // input file stream
     string line;
     bool found = false;
@@ -60,7 +62,46 @@ void searchContact() {
     }
     file.close();
 }
+void deleteContact() {
+    /**
+     * Cant delete directly in C++
+     * open original file for reading
+     * open temp file for writing
+     * copy all the lines except the ones want to delete
+     * close both files
+     * delete original file
+     * rename the temp file to the original file
+     */
 
+    string keyWord;
+    cout << "Enter the Name or Phone Number to Delete: ";
+    getline(cin, keyWord);
+
+    string line;
+    ifstream inFile("contacts.txt"); // original
+    ofstream outFile("temp.txt");    // temp
+
+    bool deleted = false;
+
+    if (inFile.is_open() && outFile.is_open()) {
+        while (getline(inFile, line)) {
+            vector<string> data = split(line);
+            if (data.size() == 3) {
+                if (data[0].find(keyWord) != string::npos || data[1].find(keyWord) != string::npos) {
+                    deleted = true;
+                    continue;
+                }
+            }
+            outFile << line << endl;
+        }
+    }
+    inFile.close(); outFile.close();
+    remove("contacts.txt");
+    rename("temp.txt", "contacts.txt");
+
+    if (deleted) cout << "Contact Deleted Successfully!\n";
+    else cout << "No Matching Contact Found to Delete!\n";
+}
 void viewContact() {
     ifstream file("contacts.txt");
     string line;
@@ -70,7 +111,7 @@ void viewContact() {
             vector<string> data = split(line);
 
             if (data.size() == 3) {
-                cout << endl << data[0] << " " << data[1] << " " << data[2] << endl;
+                cout << endl << data[0] << " " << data[1] << " " << data[2];
             }
         }
     }
@@ -79,7 +120,7 @@ void viewContact() {
 int main() {
     while (true) {
         cout << "\n-----Contact Management-----\n";
-        cout << "1. Add Contact\n2. View Contact\n3. Exit\n\n choice: ";
+        cout << "1. Add Contact\n2. View Contact\n3. Search Contact\n4. Delete Contact\n5. Exit\n\n choice: ";
         string choice;
         getline(cin, choice);
 
@@ -88,9 +129,14 @@ int main() {
         else if (choice == "2")
             viewContact();
         else if (choice == "3")
+            searchContact();
+        else if (choice == "4")
+            deleteContact();
+        else if (choice == "5")
             break;
         else 
             cout << "Invalid Option. Please Try Again!\n";
     }
     cout << "-----Good Bye!-----";
+    return 0;
 }
