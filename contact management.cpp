@@ -24,22 +24,43 @@ vector<string> split(const string& line, char delimiter = '|') {
 }
 void addContact() {
     Contact c;
-    cout << "Enter name:\n ";
+    cout << "Enter name: ";
     getline(cin, c.name);
 
-    cout << "Enter phone number: \n";
+    cout << "Enter phone number: ";
     getline(cin, c.phone);
 
-    cout << "Enter email: \n";
+    cout << "Enter email: ";
     getline(cin, c.email);
 
-    ofstream file("contact.txt", ios::app);
+    ofstream file("contacts.txt", ios::app); // output file stream
     if (file.is_open()) 
-        file << c.name <<"|" << c.phone << "|" << c.email;
+        file << c.name <<"|" << c.phone << "|" << c.email << endl;
     file.close();
 
     cout << "Contact added successfully!" << endl;
 }
+void searchContact() {
+    string keyWord;
+    getline(cin, keyWord);
+    ifstream file("contacts.txt"); // input file stream
+    string line;
+    bool found = false;
+
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            vector<string> data = split(line);
+            if ((data.size() == 3) && (data[0].find(keyWord) != string:: npos || data[1].find(keyWord) != string::npos)) {
+                cout << "Found Contact" << endl;
+                cout << "Name: " << data[0] << ", Phone: " << data[1] << ", Email: " << data[2];
+                found = true;
+            }
+        }
+        if (!found) cout << "No Matching Contact Found" << endl;
+    }
+    file.close();
+}
+
 void viewContact() {
     ifstream file("contacts.txt");
     string line;
@@ -49,7 +70,7 @@ void viewContact() {
             vector<string> data = split(line);
 
             if (data.size() == 3) {
-                cout << data[0] << " " << data[1] << " " << data[2] << endl;
+                cout << endl << data[0] << " " << data[1] << " " << data[2] << endl;
             }
         }
     }
@@ -58,7 +79,7 @@ void viewContact() {
 int main() {
     while (true) {
         cout << "\n-----Contact Management-----\n";
-        cout << "1. Add Contact\n2. View Contact\n3. Exit";
+        cout << "1. Add Contact\n2. View Contact\n3. Exit\n\n choice: ";
         string choice;
         getline(cin, choice);
 
